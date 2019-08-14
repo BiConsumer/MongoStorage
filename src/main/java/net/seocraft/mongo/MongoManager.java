@@ -37,12 +37,12 @@ public class MongoManager {
 
         userStorageProvider.saveSync(new UserImp(id, "lel", status));
 
-        userStorageProvider.findOneSync(id).ifPresent(user -> {
+        userStorageProvider.findOne(id).callback(wrappedResponse -> wrappedResponse.ifSuccessful(user -> {
             try {
                 System.out.println(mapper.writeValueAsString(user));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        });
+        }));
     }
 }

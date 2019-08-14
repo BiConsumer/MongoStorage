@@ -1,48 +1,48 @@
 package net.seocraft.mongo.datamanager;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import net.seocraft.mongo.concurrent.AsyncResponse;
 import net.seocraft.mongo.models.Model;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.Set;
 
-public interface StorageProvider<O extends Model> {
+public interface StorageProvider<T extends Model> {
 
-    @NotNull ListenableFuture<Optional<O>> findOne(@NotNull String id);
+    @NotNull AsyncResponse<T> findOne(@NotNull String id);
 
-    @NotNull ListenableFuture<Set<O>> find(@NotNull Set<String> ids);
+    @NotNull AsyncResponse<Set<T>> find(@NotNull Set<String> ids);
 
-    @NotNull ListenableFuture<Set<O>> find(int limit);
+    @NotNull AsyncResponse<Set<T>> find(int limit);
 
-    @NotNull ListenableFuture<Set<O>> find();
+    @NotNull AsyncResponse<Set<T>> find();
 
-    ListenableFuture<Void> save(@NotNull O object);
+    AsyncResponse<Void> save(@NotNull T object);
 
-    ListenableFuture<Void> save(@NotNull Set<O> objects);
+    AsyncResponse<Void> save(@NotNull Set<T> objects);
 
-    ListenableFuture<Void> delete(@NotNull String id);
+    AsyncResponse<Void> delete(@NotNull String id);
 
-    ListenableFuture<Void> delete(@NotNull O object);
+    AsyncResponse<Void> delete(@NotNull T object);
 
-    ListenableFuture<Void> delete(@NotNull Set<O> objects);
+    AsyncResponse<Void> delete(@NotNull Set<T> objects);
 
-    Optional<O> findOneSync(@NotNull String id);
+    Optional<T> findOneSync(@NotNull String id);
 
-    @NotNull Set<O> findSync(@NotNull Set<String> idSet);
+    @NotNull Set<T> findSync(@NotNull Set<String> idSet);
 
-    @NotNull Set<O> findSync(int limit);
+    @NotNull Set<T> findSync(int limit);
 
-    @NotNull Set<O> findSync();
+    @NotNull Set<T> findSync();
 
-    void saveSync(@NotNull O object);
+    void saveSync(@NotNull T object);
 
-    void saveSync(@NotNull Set<O> objectSet);
+    void saveSync(@NotNull Set<T> objectSet);
 
     void deleteSync(@NotNull String id);
 
-    void deleteSync(@NotNull O object);
+    void deleteSync(@NotNull T object);
 
-    void deleteSync(@NotNull Set<O> objectSet);
+    void deleteSync(@NotNull Set<T> objectSet);
 
 }
