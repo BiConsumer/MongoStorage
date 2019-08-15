@@ -87,12 +87,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>com.google.gson</pattern>
-                            <shadedPattern>net.seocraft.google</shadedPattern>
-                        </relocation>
-                    </relocations>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <filters>
                         <filter>
