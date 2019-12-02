@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.mongodb.DB;
 import net.seocraft.mongo.concurrent.AsyncResponse;
+import net.seocraft.mongo.concurrent.SimpleAsyncResponse;
 import net.seocraft.mongo.concurrent.WrappedResponse;
 import net.seocraft.mongo.models.Model;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +19,8 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
     private ListeningExecutorService executorService;
     private JacksonDBCollection<T, String> mongoCollection;
 
-    private String dataPrefix;
-    private Class<? extends T> modelClass;
-
-    public MongoStorageProvider(ListeningExecutorService executorService, DB database, String dataPrefix, Class<T> modelClass, ObjectMapper mapper) {
+    public MongoStorageProvider(@NotNull ListeningExecutorService executorService, @NotNull DB database, @NotNull String dataPrefix, @NotNull Class<T> modelClass, @NotNull ObjectMapper mapper) {
         this.executorService = executorService;
-        this.dataPrefix = dataPrefix;
-        this.modelClass = modelClass;
         this.mongoCollection = JacksonDBCollection.wrap(database.getCollection(dataPrefix),
                 modelClass,
                 String.class,
@@ -34,7 +30,7 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
 
     @Override
     public @NotNull AsyncResponse<T> findOne(@NotNull String id) {
-        return new AsyncResponse<>(this.executorService.submit(() -> {
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> {
             Optional<T> response = this.findOneSync(id);
             return response.map(t -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, t))
                     .orElseGet(() -> new WrappedResponse<>(null, WrappedResponse.Status.ERROR, null));
@@ -43,22 +39,22 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
 
     @Override
     public @NotNull AsyncResponse<Set<T>> find(@NotNull Set<String> ids) {
-        return new AsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync(ids))));
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync(ids))));
     }
 
     @Override
     public @NotNull AsyncResponse<Set<T>> find(int limit) {
-        return new AsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync(limit))));
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync(limit))));
     }
 
     @Override
     public @NotNull AsyncResponse<Set<T>> find() {
-        return new AsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync())));
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync())));
     }
 
     @Override
     public AsyncResponse<Void> save(@NotNull T object) {
-        return new AsyncResponse<>(this.executorService.submit(() -> {
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> {
             this.saveSync(object);
             return null;
         }));
@@ -66,7 +62,7 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
 
     @Override
     public AsyncResponse<Void> save(@NotNull Set<T> objects) {
-        return new AsyncResponse<>(this.executorService.submit(() -> {
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> {
             this.saveSync(objects);
             return null;
         }));
@@ -74,7 +70,7 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
 
     @Override
     public AsyncResponse<Void> delete(@NotNull String id) {
-        return new AsyncResponse<>(this.executorService.submit(() -> {
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> {
             this.deleteSync(id);
             return null;
         }));
@@ -82,7 +78,7 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
 
     @Override
     public AsyncResponse<Void> delete(@NotNull T object) {
-        return new AsyncResponse<>(this.executorService.submit(() -> {
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> {
             this.deleteSync(object);
             return null;
         }));
@@ -90,7 +86,7 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
 
     @Override
     public AsyncResponse<Void> delete(@NotNull Set<T> objects) {
-        return new AsyncResponse<>(this.executorService.submit(() -> {
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> {
             this.deleteSync(objects);
             return null;
         }));
@@ -98,7 +94,7 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
 
     @Override
     public Optional<T> findOneSync(@NotNull String id) {
-        return Optional.ofNullable(mongoCollection.findOneById(id));
+        return Optional.ofNullable(this.mongoCollection.findOneById(id));
     }
 
     @Override
@@ -135,7 +131,7 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
 
     @Override
     public void deleteSync(@NotNull T object) {
-        this.deleteSync(object.id());
+        this.deleteSync(object.getId());
     }
 
     @Override

@@ -10,4 +10,5 @@ public interface Callback<T> {
     default void handleException(Throwable throwable){
         Logger.getGlobal().log(Level.SEVERE, "Error executing callback.", throwable);
     }
+
 }

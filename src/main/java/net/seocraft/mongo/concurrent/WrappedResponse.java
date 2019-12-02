@@ -1,74 +1,46 @@
 package net.seocraft.mongo.concurrent;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/**
- * This class will wrap an async response with a success status or an exception
- * @param <T> Interface/Class that will be wrapped
- */
-public class WrappedResponse<T> {
+public class WrappedResponse<T> implements Response<T> {
 
-    private Exception throwedException;
+    @Nullable private Exception throwedException;
     @NotNull private Status status;
-    private T response;
+    @Nullable private T response;
 
     /**
-     * Constructor of async resposne
+     * Constructor of async response
      * @param throwedException shouldn't be null when an exception was thrown during the async block
      * @param status should be SUCCESS when throwedException is null or ERROR when response is null
-     * @param response shouldn't be null when an exception was never whrown during the async block
+     * @param response shouldn't be null when an exception was never thrown during the async block
      */
-    public WrappedResponse(Exception throwedException, @NotNull Status status, T response) {
+    public WrappedResponse(@Nullable Exception throwedException, @NotNull Status status, @Nullable T response) {
         this.throwedException = throwedException;
         this.status = status;
         this.response = response;
     }
 
-    /**
-     * @return thrown exception when the async block fails
-     */
-    public Exception getThrowedException() {
-        return throwedException;
+    public @Nullable Exception getThrowedException() {
+        return this.throwedException;
     }
 
-    /**
-     * @return Async block status
-     */
     public @NotNull Status getStatus() {
-        return status;
+        return this.status;
     }
 
-    /**
-     * @return Response block status
-     */
-    public T getResponse() {
-        return response;
+    public @Nullable T getResponse() {
+        return this.response;
     }
 
-    /**
-     * @return {@code true} if status is SUCCESS, otherwise {@code false}
-     */
     public boolean isSuccessful() {
         return status == Status.SUCCESS;
     }
 
-    /**
-     * If response was successful, invoke the specified consumer with the value,
-     * otherwise do nothing.
-     * @param consumer block to be executed if a value is present
-     * @throws NullPointerException if value is present and {@code consumer} is null
-     */
     public void ifSuccessful(Consumer<? super T> consumer) {
-        if (status == Status.SUCCESS)
+        if (this.status == Status.SUCCESS)
             consumer.accept(response);
-    }
-
-    /**
-     * Enum of the reponse status
-     */
-    public enum Status {
-        SUCCESS, ERROR
     }
 }

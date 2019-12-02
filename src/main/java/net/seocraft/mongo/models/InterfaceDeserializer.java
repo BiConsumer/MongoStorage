@@ -9,8 +9,8 @@ public class InterfaceDeserializer {
     public static SimpleModule getAbstractTypes() {
         SimpleModule module = new SimpleModule("InterfaceDeserializerModule", Version.unknownVersion());
         SimpleAbstractTypeResolver resolver = new SimpleAbstractTypeResolver();
-        resolver.addMapping(Status.class, StatusImp.class)
-                .addMapping(User.class, UserImp.class);
+        resolver.addMapping(Status.class, SimpleStatus.class)
+                .addMapping(User.class, SimpleUser.class);
         module.setAbstractTypes(resolver);
         return module;
     }

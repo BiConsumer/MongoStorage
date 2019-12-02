@@ -9,7 +9,7 @@ import java.beans.ConstructorProperties;
 
 @Getter
 @Setter
-public class StatusImp implements Status {
+public class SimpleStatus implements Status {
 
     @JsonProperty("current_mode")
     @NotNull private String currentMode;
@@ -21,7 +21,7 @@ public class StatusImp implements Status {
     private long lastUpdated;
 
     @ConstructorProperties({"current_mode", "last_mode", "last_updated"})
-    public StatusImp(@NotNull String currentMode, @NotNull String lastMode, long lastUpdated) {
+    public SimpleStatus(@NotNull String currentMode, @NotNull String lastMode, long lastUpdated) {
         this.currentMode = currentMode;
         this.lastMode = lastMode;
         this.lastUpdated = lastUpdated;
