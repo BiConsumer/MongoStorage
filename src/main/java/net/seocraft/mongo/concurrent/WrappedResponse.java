@@ -23,22 +23,27 @@ public class WrappedResponse<T> implements Response<T> {
         this.response = response;
     }
 
+    @Override
     public @Nullable Exception getThrowedException() {
         return this.throwedException;
     }
 
+    @Override
     public @NotNull Status getStatus() {
         return this.status;
     }
 
+    @Override
     public @Nullable T getResponse() {
         return this.response;
     }
 
+    @Override
     public boolean isSuccessful() {
         return status == Status.SUCCESS;
     }
 
+    @Override
     public void ifSuccessful(Consumer<? super T> consumer) {
         if (this.status == Status.SUCCESS)
             consumer.accept(response);

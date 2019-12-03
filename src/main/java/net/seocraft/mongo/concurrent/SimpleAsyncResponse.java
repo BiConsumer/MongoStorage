@@ -8,17 +8,18 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("UnstableApiUsage")
 public class SimpleAsyncResponse<T> implements AsyncResponse<T> {
 
-    private ListenableFuture<Response<T>> responseFuture;
+    @NotNull private ListenableFuture<Response<T>> responseFuture;
 
     public SimpleAsyncResponse(@NotNull ListenableFuture<Response<T>> responseFuture) {
         this.responseFuture = responseFuture;
     }
 
-    public void callback(Callback<Response<T>> callback) {
-        Futures.addCallback(this.responseFuture, wrapCallback(callback));
+    @Override
+    public void callback(@NotNull Callback<Response<T>> callback) {
+        Futures.addCallback(this.responseFuture, this.wrapCallback(callback));
     }
 
-    private FutureCallback<Response<T>> wrapCallback(Callback<Response<T>> callback) {
+    private @NotNull FutureCallback<Response<T>> wrapCallback(@NotNull Callback<Response<T>> callback) {
         return new FutureCallback<Response<T>>() {
 
             @Override
