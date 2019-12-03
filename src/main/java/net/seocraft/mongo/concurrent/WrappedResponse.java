@@ -3,13 +3,14 @@ package net.seocraft.mongo.concurrent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class WrappedResponse<T> implements Response<T> {
 
-    @Nullable private Exception throwedException;
     @NotNull private Status status;
     @Nullable private T response;
+    @Nullable private Exception throwedException;
 
     /**
      * Constructor of async response
@@ -17,15 +18,10 @@ public class WrappedResponse<T> implements Response<T> {
      * @param status should be SUCCESS when throwedException is null or ERROR when response is null
      * @param response shouldn't be null when an exception was never thrown during the async block
      */
-    public WrappedResponse(@Nullable Exception throwedException, @NotNull Status status, @Nullable T response) {
-        this.throwedException = throwedException;
+    public WrappedResponse(@NotNull Status status, @Nullable T response, @Nullable Exception throwedException) {
         this.status = status;
+        this.throwedException = throwedException;
         this.response = response;
-    }
-
-    @Override
-    public @Nullable Exception getThrowedException() {
-        return this.throwedException;
     }
 
     @Override
@@ -34,8 +30,13 @@ public class WrappedResponse<T> implements Response<T> {
     }
 
     @Override
-    public @Nullable T getResponse() {
-        return this.response;
+    public @NotNull Optional<T> getResponse() {
+        return Optional.ofNullable(this.response);
+    }
+
+    @Override
+    public @NotNull Optional<Exception> getThrowedException() {
+        return Optional.ofNullable(this.throwedException);
     }
 
     @Override
@@ -44,8 +45,8 @@ public class WrappedResponse<T> implements Response<T> {
     }
 
     @Override
-    public void ifSuccessful(Consumer<? super T> consumer) {
+    public void ifSuccessful(@NotNull Consumer<? super T> consumer) {
         if (this.status == Status.SUCCESS)
-            consumer.accept(response);
+            consumer.accept(this.response);
     }
 }

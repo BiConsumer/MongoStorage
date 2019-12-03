@@ -32,24 +32,24 @@ public class MongoStorageProvider<T extends Model> implements StorageProvider<T>
     public @NotNull AsyncResponse<T> findOne(@NotNull String id) {
         return new SimpleAsyncResponse<>(this.executorService.submit(() -> {
             Optional<T> response = this.findOneSync(id);
-            return response.map(t -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, t))
-                    .orElseGet(() -> new WrappedResponse<>(null, WrappedResponse.Status.ERROR, null));
+            return response.map(model -> new WrappedResponse<>(WrappedResponse.Status.SUCCESS, model, null))
+                    .orElseGet(() -> new WrappedResponse<>(WrappedResponse.Status.ERROR, null, null));
         }));
     }
 
     @Override
     public @NotNull AsyncResponse<Set<T>> find(@NotNull Set<String> ids) {
-        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync(ids))));
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(WrappedResponse.Status.SUCCESS, this.findSync(ids), null)));
     }
 
     @Override
     public @NotNull AsyncResponse<Set<T>> find(int limit) {
-        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync(limit))));
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>( WrappedResponse.Status.SUCCESS, this.findSync(limit), null)));
     }
 
     @Override
     public @NotNull AsyncResponse<Set<T>> find() {
-        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(null, WrappedResponse.Status.SUCCESS, this.findSync())));
+        return new SimpleAsyncResponse<>(this.executorService.submit(() -> new WrappedResponse<>(WrappedResponse.Status.SUCCESS, this.findSync(), null)));
     }
 
     @Override

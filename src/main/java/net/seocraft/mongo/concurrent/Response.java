@@ -3,6 +3,7 @@ package net.seocraft.mongo.concurrent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -12,11 +13,6 @@ import java.util.function.Consumer;
 public interface Response<T> {
 
     /**
-     * @return thrown exception when the async block fails
-     */
-    @Nullable Exception getThrowedException();
-
-    /**
      * @return Async block status
      */
     @NotNull Status getStatus();
@@ -24,7 +20,12 @@ public interface Response<T> {
     /**
      * @return Response block status
      */
-    @Nullable T getResponse();
+    @NotNull Optional<T> getResponse();
+
+    /**
+     * @return thrown exception when the async block fails
+     */
+    @NotNull Optional<Exception> getThrowedException();
 
     /**
      * @return {@code true} if status is SUCCESS, otherwise {@code false}
@@ -37,7 +38,7 @@ public interface Response<T> {
      * @param consumer block to be executed if a value is present
      * @throws NullPointerException if value is present and {@code consumer} is null
      */
-    void ifSuccessful(Consumer<? super T> consumer);
+    void ifSuccessful(@NotNull Consumer<? super T> consumer);
 
     /**
      * Enum of the reponse status
